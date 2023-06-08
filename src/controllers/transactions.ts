@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import Transaction from "../models/transactions";
+import mongoose from "mongoose";
 
 /**
  * @route GET /transactions
@@ -24,9 +25,9 @@ export const getTransactions: RequestHandler = async (req, res, next) => {
  * @access Private !!!Not Implemented!!!
  */
 interface CreateTransactionBody {
-  TransactionType: string;
-  TransactionDate: Date;
-  TransactionAmount: number;
+  TransactionType?: string;
+  TransactionDate?: Date;
+  TransactionAmount?: number;
   TransactionTag?: string;
 }
 export const createTransaction: RequestHandler<
@@ -91,9 +92,44 @@ export const getAllTransactions: RequestHandler<
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize);
 
-    if (transactions.length === 0) throw createHttpError(404, "Page Not Found");
+    if (transactions.length === 0) {
+      throw createHttpError(404, "Page Not Found");
+    }
 
     res.status(200).json(transactions);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route GET /transactions/:id
+ * @description Get a transaction by id
+ * @access Private !!!Not Implemented!!!
+ */
+interface GetTransactionByIdParams {
+  transactionId: string;
+}
+export const getTransactionById: RequestHandler<
+  GetTransactionByIdParams,
+  unknown,
+  unknown,
+  unknown
+> = async (req, res, next) => {
+  try {
+    // Check if id is valid
+    if (!mongoose.Types.ObjectId.isValid(req.params.transactionId)) {
+      throw createHttpError(400, "Invalid Id");
+    }
+    // Get transaction
+    const transaction = await Transaction.findById(req.params.transactionId);
+
+    // Check if transaction exists
+    if (!transaction) {
+      throw createHttpError(404, "Transaction Not Found");
+    }
+
+    res.status(200).json(transaction);
   } catch (error) {
     next(error);
   }

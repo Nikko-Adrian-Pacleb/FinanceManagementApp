@@ -8,6 +8,7 @@ const router = express.Router();
 router.get("/", TransactionsController.getTransactions);
 router.post("/", TransactionsController.createTransaction);
 router.get("/page/:pageNumber", TransactionsController.getAllTransactions);
+router.get("/:transactionId", TransactionsController.getTransactionById);
 //-- Routes End --//
 
 export default router;
