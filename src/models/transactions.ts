@@ -10,14 +10,19 @@ const transactionSchema = new Schema(
     TransactionDate: {
       type: Date,
       required: true,
+      default: Date.now,
     },
     TransactionAmount: {
       type: Number,
       required: true,
+      get: (v: number) => (v / 100).toFixed(2),
+      set: (v: number) => v * 100,
     },
-    TransactionTag: {
-      type: String,
-    },
+    TransactionTag: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,

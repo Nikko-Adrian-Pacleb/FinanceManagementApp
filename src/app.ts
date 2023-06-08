@@ -19,6 +19,7 @@ app.use((req, res, next) => {
   next(createHttpError(404, "Page Not Found"));
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
   console.error(error);
   let errorMessage = "An unknown error occurred!";
