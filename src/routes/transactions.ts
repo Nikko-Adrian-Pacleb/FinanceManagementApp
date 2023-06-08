@@ -9,6 +9,7 @@ router.get("/", TransactionsController.getTransactions);
 router.post("/", TransactionsController.createTransaction);
 router.get("/page/:pageNumber", TransactionsController.getAllTransactions);
 router.get("/:transactionId", TransactionsController.getTransactionById);
+router.put("/:transactionId", TransactionsController.updateTransactionById);
 //-- Routes End --//
 
 export default router;

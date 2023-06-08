@@ -20,7 +20,7 @@ const transactionSchema = new Schema(
     },
     TransactionTag: [
       {
-        type: String,
+        type: Schema.Types.ObjectId,
       },
     ],
   },

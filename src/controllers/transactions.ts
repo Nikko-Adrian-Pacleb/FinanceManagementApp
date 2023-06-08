@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import Transaction from "../models/transactions";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 /**
  * @route GET /transactions
@@ -28,7 +28,7 @@ interface CreateTransactionBody {
   TransactionType?: string;
   TransactionDate?: Date;
   TransactionAmount?: number;
-  TransactionTag?: string;
+  TransactionTag?: Array<Types.ObjectId>;
 }
 export const createTransaction: RequestHandler<
   unknown,
@@ -130,6 +130,69 @@ export const getTransactionById: RequestHandler<
     }
 
     res.status(200).json(transaction);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route PUT /transactions/:id
+ * @description Update a transaction by id
+ * @access Private !!!Not Implemented!!!
+ */
+interface UpdateTransactionByIdParams {
+  transactionId: string;
+}
+interface UpdateTransactionByIdBody {
+  TransactionType?: string;
+  TransactionDate?: Date;
+  TransactionAmount?: number;
+  TransactionTag?: Array<Types.ObjectId>;
+}
+export const updateTransactionById: RequestHandler<
+  UpdateTransactionByIdParams,
+  unknown,
+  UpdateTransactionByIdBody,
+  unknown
+> = async (req, res, next) => {
+  try {
+    // Check if id is valid
+    if (!mongoose.Types.ObjectId.isValid(req.params.transactionId)) {
+      throw createHttpError(400, "Invalid Id");
+    }
+    // Get transaction
+    const updatedTransaction = await Transaction.findById(
+      req.params.transactionId
+    );
+
+    // Check if transaction exists
+    if (!updatedTransaction) {
+      throw createHttpError(404, "Transaction Not Found");
+    }
+
+    // Update transaction
+    const {
+      TransactionType,
+      TransactionDate,
+      TransactionAmount,
+      TransactionTag,
+    } = req.body;
+    if (TransactionType) updatedTransaction.TransactionType = TransactionType;
+    if (TransactionDate) updatedTransaction.TransactionDate = TransactionDate;
+    if (TransactionAmount)
+      updatedTransaction.TransactionAmount = TransactionAmount;
+    if (TransactionTag) updatedTransaction.TransactionTag = TransactionTag;
+
+    // Check if transaction is valid
+    const validationError = updatedTransaction.validateSync();
+    if (validationError) {
+      throw createHttpError(400, validationError);
+    }
+
+    // Save transaction to database
+    await updatedTransaction.save();
+
+    res.status(200).json(updatedTransaction);
   } catch (error) {
     next(error);
   }
