@@ -9,7 +9,9 @@ import Transaction from "../models/transactions";
  */
 export const getTransactions: RequestHandler = async (req, res, next) => {
   try {
-    const transaxtions = await Transaction.find().exec();
+    const transaxtions = await Transaction.find()
+      .sort({ TransactionDate: -1 })
+      .limit(10);
     res.status(200).json(transaxtions);
   } catch (error) {
     next(error);
