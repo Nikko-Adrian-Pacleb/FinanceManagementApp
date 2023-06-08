@@ -81,6 +81,10 @@ export const getAllTransactions: RequestHandler<
 > = async (req, res, next) => {
   try {
     const pageNumber = parseInt(req.params.pageNumber);
+    // Check if page number is valid
+    if (isNaN(pageNumber)) throw createHttpError(400, "Invalid Page Number");
+    if (pageNumber < 1) throw createHttpError(400, "Invalid Page Number");
+    // Get transactions
     const pageSize = 10;
     const transactions = await Transaction.find()
       .sort({ TransactionDate: -1 })
