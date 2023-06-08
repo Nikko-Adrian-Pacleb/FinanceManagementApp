@@ -64,3 +64,33 @@ export const createTransaction: RequestHandler<
     next(error);
   }
 };
+
+/**
+ * @route GET /transactions/page/:pageNumber
+ * @description Get all transactions
+ * @access Private !!!Not Implemented!!!
+ */
+interface GetAllTransactionsParams {
+  pageNumber: string;
+}
+export const getAllTransactions: RequestHandler<
+  GetAllTransactionsParams,
+  unknown,
+  unknown,
+  unknown
+> = async (req, res, next) => {
+  try {
+    const pageNumber = parseInt(req.params.pageNumber);
+    const pageSize = 10;
+    const transactions = await Transaction.find()
+      .sort({ TransactionDate: -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+
+    if (transactions.length === 0) throw createHttpError(404, "Page Not Found");
+
+    res.status(200).json(transactions);
+  } catch (error) {
+    next(error);
+  }
+};
