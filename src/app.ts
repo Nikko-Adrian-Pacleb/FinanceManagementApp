@@ -1,7 +1,10 @@
 import "dotenv/config";
 import express, { Request, Response, NextFunction } from "express";
 import homeRoute from "./routes/home";
+// Routes
 import transacationsRoute from "./routes/transactions";
+import transactionTagsRoute from "./routes/transactionTags";
+// Middleware
 import morgan from "morgan";
 import createHttpError, { isHttpError } from "http-errors";
 
@@ -11,9 +14,10 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
+// Routes
 app.use("/", homeRoute);
-
 app.use("/transactions", transacationsRoute);
+app.use("/transactionTags", transactionTagsRoute);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Page Not Found"));
