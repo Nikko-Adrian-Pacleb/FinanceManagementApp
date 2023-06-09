@@ -197,3 +197,40 @@ export const updateTransactionById: RequestHandler<
     next(error);
   }
 };
+
+/**
+ * @route DELETE /transactions/:id
+ * @description Delete a transaction by id
+ * @access Private !!!Not Implemented!!!
+ */
+interface DeleteTransactionByIdParams {
+  transactionId: string;
+}
+export const deleteTransactionById: RequestHandler<
+  DeleteTransactionByIdParams,
+  unknown,
+  unknown,
+  unknown
+> = async (req, res, next) => {
+  const { transactionId } = req.params;
+  try {
+    // Check if id is valid
+    if (!mongoose.Types.ObjectId.isValid(transactionId)) {
+      throw createHttpError(400, "Invalid Id");
+    }
+
+    // Delete transaction
+    const deletedTransaction = await Transaction.findByIdAndDelete(
+      transactionId
+    );
+
+    // Check if transaction exists
+    if (!deletedTransaction) {
+      throw createHttpError(404, "Transaction Not Found");
+    }
+
+    res.status(200).redirect("/transactions");
+  } catch (error) {
+    next(error);
+  }
+};
