@@ -160,15 +160,14 @@ export const updateTransactionById: RequestHandler<
   unknown
 > = async (req, res, next) => {
   try {
-    // Check if id is valid
+    // Check if transactionId is valid
     if (!mongoose.Types.ObjectId.isValid(req.params.transactionId)) {
-      throw createHttpError(400, "Invalid Id");
+      throw createHttpError(400, "Invalid transaction id");
     }
     // Get transaction
     const updatedTransaction = await Transaction.findById(
       req.params.transactionId
     );
-
     // Check if transaction exists
     if (!updatedTransaction) {
       throw createHttpError(404, "Transaction Not Found");
@@ -182,13 +181,21 @@ export const updateTransactionById: RequestHandler<
       TransactionAmount,
       TransactionTag,
     } = req.body;
-    if (TransactionDescription)
+    if (TransactionDescription) {
       updatedTransaction.TransactionDescription = TransactionDescription;
-    if (TransactionType) updatedTransaction.TransactionType = TransactionType;
-    if (TransactionDate) updatedTransaction.TransactionDate = TransactionDate;
-    if (TransactionAmount)
+    }
+    if (TransactionType) {
+      updatedTransaction.TransactionType = TransactionType;
+    }
+    if (TransactionDate) {
+      updatedTransaction.TransactionDate = TransactionDate;
+    }
+    if (TransactionAmount) {
       updatedTransaction.TransactionAmount = TransactionAmount;
-    if (TransactionTag) updatedTransaction.TransactionTag = TransactionTag;
+    }
+    if (TransactionTag) {
+      updatedTransaction.TransactionTag = TransactionTag;
+    }
 
     // Check if transaction is valid
     const validationError = updatedTransaction.validateSync();

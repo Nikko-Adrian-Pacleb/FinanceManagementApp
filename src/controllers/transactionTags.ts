@@ -127,23 +127,22 @@ export const updateTransactionTagById: RequestHandler<
     if (!mongoose.isValidObjectId(req.params.transactionTagId)) {
       throw createHttpError(400, "Invalid transactionTag id");
     }
-
-    // Get transactionTag by id
+    // Get transactionTag
     const updatedTransactionTag = await TransactionTag.findById(
       req.params.transactionTagId
     );
-
     // Check if transactionTag exists
     if (!updatedTransactionTag) {
       throw createHttpError(404, "TransactionTag not found");
     }
 
     // Update transactionTag
-    if (req.body.TransactionTagName) {
-      updatedTransactionTag.TransactionTagName = req.body.TransactionTagName;
+    const { TransactionTagName, TransactionTagColor } = req.body;
+    if (TransactionTagName) {
+      updatedTransactionTag.TransactionTagName = TransactionTagName;
     }
-    if (req.body.TransactionTagColor) {
-      updatedTransactionTag.TransactionTagColor = req.body.TransactionTagColor;
+    if (TransactionTagColor) {
+      updatedTransactionTag.TransactionTagColor = TransactionTagColor;
     }
 
     // Check if transactionTag is valid
