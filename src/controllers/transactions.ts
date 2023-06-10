@@ -25,6 +25,7 @@ export const getTransactions: RequestHandler = async (req, res, next) => {
  * @access Private !!!Not Implemented!!!
  */
 interface CreateTransactionBody {
+  TransactionDescription?: string;
   TransactionType?: string;
   TransactionDate?: Date;
   TransactionAmount?: number;
@@ -37,6 +38,7 @@ export const createTransaction: RequestHandler<
   unknown
 > = async (req, res, next) => {
   const {
+    TransactionDescription,
     TransactionType,
     TransactionDate,
     TransactionAmount,
@@ -45,6 +47,7 @@ export const createTransaction: RequestHandler<
   try {
     // Create new transaction
     const newTransaction = new Transaction({
+      TransactionDescription,
       TransactionType,
       TransactionDate,
       TransactionAmount,
@@ -144,6 +147,7 @@ interface UpdateTransactionByIdParams {
   transactionId: string;
 }
 interface UpdateTransactionByIdBody {
+  TransactionDescription?: string;
   TransactionType?: string;
   TransactionDate?: Date;
   TransactionAmount?: number;
@@ -172,11 +176,14 @@ export const updateTransactionById: RequestHandler<
 
     // Update transaction
     const {
+      TransactionDescription,
       TransactionType,
       TransactionDate,
       TransactionAmount,
       TransactionTag,
     } = req.body;
+    if (TransactionDescription)
+      updatedTransaction.TransactionDescription = TransactionDescription;
     if (TransactionType) updatedTransaction.TransactionType = TransactionType;
     if (TransactionDate) updatedTransaction.TransactionDate = TransactionDate;
     if (TransactionAmount)
