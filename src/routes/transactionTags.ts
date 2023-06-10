@@ -11,6 +11,10 @@ router.get(
   "/:transactionTagId",
   TransactionTagsController.getTransactionTagById
 );
+router.put(
+  "/:transactionTagId",
+  TransactionTagsController.updateTransactionTagById
+);
 //-- Routes End --//
 
 export default router;

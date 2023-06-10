@@ -95,3 +95,68 @@ export const getTransactionTagById: RequestHandler<
     next(error);
   }
 };
+
+/**
+ * @route PUT /transactionTags/:transactionTagId
+ * @description Update a transactionTag by id
+ * @access Private !!!Not Implemented!!!
+ */
+interface UpdateTransactionTagByIdParams {
+  transactionTagId: string;
+}
+interface UpdateTransactionTagByIdBody {
+  TransactionTagName?: string;
+  TransactionTagColor?: string;
+}
+export const updateTransactionTagById: RequestHandler<
+  UpdateTransactionTagByIdParams,
+  unknown,
+  UpdateTransactionTagByIdBody,
+  unknown
+> = async (req, res, next) => {
+  try {
+    // Check if transactionTagName already exists
+    const transactionTagExists = await TransactionTag.findOne({
+      TransactionTagName: req.body.TransactionTagName,
+    });
+    if (transactionTagExists) {
+      throw createHttpError(400, "TransactionTag already exists");
+    }
+
+    // Check if transactionTagId is valid
+    if (!mongoose.isValidObjectId(req.params.transactionTagId)) {
+      throw createHttpError(400, "Invalid transactionTag id");
+    }
+
+    // Get transactionTag by id
+    const updatedTransactionTag = await TransactionTag.findById(
+      req.params.transactionTagId
+    );
+
+    // Check if transactionTag exists
+    if (!updatedTransactionTag) {
+      throw createHttpError(404, "TransactionTag not found");
+    }
+
+    // Update transactionTag
+    if (req.body.TransactionTagName) {
+      updatedTransactionTag.TransactionTagName = req.body.TransactionTagName;
+    }
+    if (req.body.TransactionTagColor) {
+      updatedTransactionTag.TransactionTagColor = req.body.TransactionTagColor;
+    }
+
+    // Check if transactionTag is valid
+    const validationError = updatedTransactionTag.validateSync();
+    if (validationError) {
+      throw createHttpError(400, validationError);
+    }
+
+    // Save transactionTag to database
+    await updatedTransactionTag.save();
+
+    res.status(200).json(updatedTransactionTag);
+  } catch (error) {
+    next(error);
+  }
+};
