@@ -36,12 +36,18 @@ export const createTransactionTag: RequestHandler<
 > = async (req, res, next) => {
   const { TransactionTagName, TransactionTagColor } = req.body;
   try {
+    // Check if transactionTag already exists
+    const transactionTagExists = await TransactionTag.findOne({
+      TransactionTagName,
+    });
+    if (transactionTagExists) {
+      throw createHttpError(400, "TransactionTag already exists");
+    }
     // Create new transactionTag
     const newTransactionTag = new TransactionTag({
       TransactionTagName,
       TransactionTagColor,
     });
-
     // Check if transactionTag is valid
     const validationError = newTransactionTag.validateSync();
     if (validationError) {
@@ -52,6 +58,39 @@ export const createTransactionTag: RequestHandler<
     const transactionTag = await newTransactionTag.save();
 
     res.status(201).json(transactionTag);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route GET /transactionTags/:transactionTagId
+ * @description Get a transactionTag by id
+ * @access Private !!!Not Implemented!!!
+ */
+interface GetTransactionTagByIdParams {
+  transactionTagId: string;
+}
+export const getTransactionTagById: RequestHandler<
+  GetTransactionTagByIdParams,
+  unknown,
+  unknown,
+  unknown
+> = async (req, res, next) => {
+  try {
+    // Check if transactionTagId is valid
+    if (!mongoose.isValidObjectId(req.params.transactionTagId)) {
+      throw createHttpError(400, "Invalid transactionTag id");
+    }
+    // Find transactionTag by id
+    const transactionTag = await TransactionTag.findById(
+      req.params.transactionTagId
+    );
+    // Check if transactionTag exists
+    if (!transactionTag) {
+      throw createHttpError(404, "TransactionTag not found");
+    }
+    res.status(200).json(transactionTag);
   } catch (error) {
     next(error);
   }
