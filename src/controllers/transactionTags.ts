@@ -159,3 +159,39 @@ export const updateTransactionTagById: RequestHandler<
     next(error);
   }
 };
+
+/**
+ * @route DELETE /transactionTags/:transactionTagId
+ * @description Delete a transactionTag by id
+ * @access Private !!!Not Implemented!!!
+ */
+interface DeleteTransactionTagByIdParams {
+  transactionTagId: string;
+}
+export const deleteTransactionTagById: RequestHandler<
+  DeleteTransactionTagByIdParams,
+  unknown,
+  unknown,
+  unknown
+> = async (req, res, next) => {
+  try {
+    // Check if transactionTagId is valid
+    if (!mongoose.isValidObjectId(req.params.transactionTagId)) {
+      throw createHttpError(400, "Invalid transactionTag id");
+    }
+
+    // Delete transactionTag
+    const transactionTag = await TransactionTag.findByIdAndDelete(
+      req.params.transactionTagId
+    );
+
+    // Check if transactionTag exists
+    if (!transactionTag) {
+      throw createHttpError(404, "TransactionTag not found");
+    }
+
+    res.status(200).redirect("/transactionTags");
+  } catch (error) {
+    next(error);
+  }
+};

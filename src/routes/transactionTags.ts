@@ -15,6 +15,10 @@ router.put(
   "/:transactionTagId",
   TransactionTagsController.updateTransactionTagById
 );
+router.delete(
+  "/:transactionTagId",
+  TransactionTagsController.deleteTransactionTagById
+);
 //-- Routes End --//
 
 export default router;
