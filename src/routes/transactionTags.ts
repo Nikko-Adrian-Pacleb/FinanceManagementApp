@@ -8,6 +8,10 @@ const router = express.Router();
 router.get("/", TransactionTagsController.getTransactionTags);
 router.post("/", TransactionTagsController.createTransactionTag);
 router.get(
+  "/page/:pageNumber",
+  TransactionTagsController.getAllTransactionTags
+);
+router.get(
   "/:transactionTagId",
   TransactionTagsController.getTransactionTagById
 );

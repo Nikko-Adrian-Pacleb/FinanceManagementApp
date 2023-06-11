@@ -11,7 +11,7 @@ import mongoose, { Types } from "mongoose";
 export const getTransactionTags: RequestHandler = async (req, res, next) => {
   try {
     const transactionTags = await TransactionTag.find()
-      .sort({ TransactionTag: 1 })
+      .sort({ updateAt: -1 })
       .limit(10);
     res.status(200).json(transactionTags);
   } catch (error) {
@@ -58,6 +58,44 @@ export const createTransactionTag: RequestHandler<
     const transactionTag = await newTransactionTag.save();
 
     res.status(201).json(transactionTag);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route GET /transactionTags/page/:pageNumber
+ * @description Get all transactionTags by page
+ * @access Private !!!Not Implemented!!!
+ */
+interface GetAllTransactionTagsParams {
+  pageNumber: string;
+}
+export const getAllTransactionTags: RequestHandler<
+  GetAllTransactionTagsParams,
+  unknown,
+  unknown,
+  unknown
+> = async (req, res, next) => {
+  try {
+    const pageNumber = parseInt(req.params.pageNumber);
+    // Check if page number is valid
+    if (isNaN(pageNumber) || pageNumber < 1) {
+      throw createHttpError(400, "Invalid page number");
+    }
+    // Get TransactionTags
+    const pageSize = 10;
+    const transactionTags = await TransactionTag.find()
+      .sort({ updatedAt: -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+
+    // Check if there are transactionTags up to the page requested
+    if (transactionTags.length === 0) {
+      throw createHttpError(404, "Page Not Found");
+    }
+
+    res.status(200).json(transactionTags);
   } catch (error) {
     next(error);
   }

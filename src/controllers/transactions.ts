@@ -86,8 +86,9 @@ export const getAllTransactions: RequestHandler<
   try {
     const pageNumber = parseInt(req.params.pageNumber);
     // Check if page number is valid
-    if (isNaN(pageNumber)) throw createHttpError(400, "Invalid Page Number");
-    if (pageNumber < 1) throw createHttpError(400, "Invalid Page Number");
+    if (isNaN(pageNumber) || pageNumber < 1) {
+      throw createHttpError(400, "Invalid Page Number");
+    }
     // Get transactions
     const pageSize = 10;
     const transactions = await Transaction.find()
@@ -95,6 +96,7 @@ export const getAllTransactions: RequestHandler<
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize);
 
+    // Check if there are transactions up to the page requested
     if (transactions.length === 0) {
       throw createHttpError(404, "Page Not Found");
     }
