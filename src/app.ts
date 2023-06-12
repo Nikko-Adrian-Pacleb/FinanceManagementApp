@@ -4,6 +4,7 @@ import homeRoute from "./routes/home";
 // Routes
 import transacationsRoute from "./routes/transactions";
 import transactionTagsRoute from "./routes/transactionTags";
+import accountsRoute from "./routes/accounts";
 // Middleware
 import morgan from "morgan";
 import createHttpError, { isHttpError } from "http-errors";
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/", homeRoute);
 app.use("/transactions", transacationsRoute);
 app.use("/transactionTags", transactionTagsRoute);
+app.use("/accounts", accountsRoute);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Page Not Found"));
