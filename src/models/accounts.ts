@@ -1,5 +1,7 @@
 import { InferSchemaType, Schema, model } from "mongoose";
 
+export type AccountDocument = InferSchemaType<typeof accountSchema>;
+
 const accountSchema = new Schema(
   {
     AccountId: {

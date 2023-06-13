@@ -1,5 +1,4 @@
 import express, { NextFunction } from "express";
-import createHttpError from "http-errors";
 import * as TransactionsController from "../controllers/transactions";
 
 const router = express.Router();

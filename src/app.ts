@@ -1,18 +1,44 @@
 import "dotenv/config";
+import env from "./util/validateEnv";
 import express, { Request, Response, NextFunction } from "express";
-import homeRoute from "./routes/home";
 // Routes
+import homeRoute from "./routes/home";
 import transacationsRoute from "./routes/transactions";
 import transactionTagsRoute from "./routes/transactionTags";
 import accountsRoute from "./routes/accounts";
 // Middleware
 import morgan from "morgan";
 import createHttpError, { isHttpError } from "http-errors";
+// Auth
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import passport from "passport";
 
 const app = express();
 
 app.use(morgan("dev"));
 app.use(express.json());
+
+// Session Setup
+app.use(
+  session({
+    secret: env.SESSION_SECRET,
+    store: MongoStore.create({
+      mongoUrl: env.MONGO_CONNECTION_STRING,
+      collectionName: "sessions",
+    }),
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60, // 1 hour
+    },
+  })
+);
+
+// Passport Setup
+import "./util/passport";
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routes
 app.use("/", homeRoute);
