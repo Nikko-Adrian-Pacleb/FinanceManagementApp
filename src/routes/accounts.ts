@@ -6,7 +6,7 @@ const router = express.Router();
 
 //-- Routes Start --//
 router.get("/", isAuth, AccountsController.getAccounts);
-router.get;
+router.post("/register", AccountsController.createAccount);
 //-- Routes End --//
 
 export default router;
