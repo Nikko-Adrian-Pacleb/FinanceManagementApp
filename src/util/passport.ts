@@ -21,14 +21,12 @@ passport.use(
         const account = await Account.findOne({ AccountId });
         // Check if account exists
         if (!account) {
-          console.log("Account not found");
-          return done(null, false, { message: "Incorrect username." });
+          return done(null, false, { message: "Incorrect AccountId." });
         }
         // Check if account pin is correct
         const isMatch = await bcrypt.compare(AccountPin, account.AccountPin);
         if (!isMatch) {
-          console.log("Incorrect password");
-          return done(null, false, { message: "Incorrect password." });
+          return done(null, false, { message: "Incorrect AccountPin." });
         }
         // Return account
         return done(null, account);
@@ -40,12 +38,10 @@ passport.use(
 );
 
 passport.serializeUser((account: any, done) => {
-  console.log("Serialize user");
   done(null, account.id);
 });
 
 passport.deserializeUser(async (id, done) => {
-  console.log("Deserialize user");
   const account = await Account.findById(id);
   done(null, account);
 });
