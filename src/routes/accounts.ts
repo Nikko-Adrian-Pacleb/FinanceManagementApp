@@ -6,9 +6,10 @@ const router = express.Router();
 
 //-- Routes Start --//
 router.get("/", isAuth, AccountsController.getAccounts);
-router.post("/register", AccountsController.createAccount);
+// router.post("/register", AccountsController.createAccount);
 router.get("/login", AccountsController.getLoginPage);
 router.post("/login", AccountsController.loginAccount);
+router.get("/logout", AccountsController.logoutAccount);
 //-- Routes End --//
 
 export default router;

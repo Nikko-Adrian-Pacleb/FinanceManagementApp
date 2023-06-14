@@ -1,10 +1,11 @@
 import express from "express";
+import { isAuth } from "../middleware/Authenticated";
 
 const router = express.Router();
 
 //-- Routes Start --//
-router.get("/", (req, res, next) => {
-  res.status(200).send("Home");
+router.get("/", isAuth, (req, res, next) => {
+  res.redirect("/accounts");
 });
 //-- Routes End --//
 

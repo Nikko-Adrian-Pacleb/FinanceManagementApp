@@ -111,3 +111,17 @@ export const loginAccount: RequestHandler = async (req, res, next) => {
     }
   )(req, res, next);
 };
+
+/**
+ * @route GET /accounts/logout
+ * @description Logout of an account
+ * @access Private !!!Not Implemented!!!
+ */
+export const logoutAccount: RequestHandler = (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ message: err });
+    }
+  });
+  res.redirect("/accounts/login");
+};
