@@ -3,18 +3,19 @@ import bcrypt from "bcrypt";
 import createHttpError from "http-errors";
 import Account from "../models/accounts";
 import mongoose from "mongoose";
+import passport from "passport";
 
 /**
  * @route GET /accounts
- * @description Get all accounts
+ * @description Get accounts homepage
  * @access Private !!!Not Implemented!!!
  */
 export const getAccounts: RequestHandler = async (req, res, next) => {
   try {
-    const accounts = await Account.find({}, "AccountId AccountWallets")
-      .sort({ createdAt: -1 })
-      .limit(10);
-    res.status(200).json(accounts);
+    if (!req.user) {
+      throw createHttpError(401, "Unauthorized");
+    }
+    res.send(req.user);
   } catch (error) {
     next(error);
   }
@@ -76,4 +77,37 @@ export const createAccount: RequestHandler<
   } catch (error) {
     next(error);
   }
+};
+
+/**
+ * @route GET /accounts/login
+ * @description Get an account by id
+ * @access Private !!!Not Implemented!!!
+ */
+export const getLoginPage: RequestHandler = (req, res) => {
+  res.send("Login page");
+};
+
+/**
+ * @route POST /accounts/login
+ * @description Login to an account
+ * @access Private !!!Not Implemented!!!
+ */
+export const loginAccount: RequestHandler = async (req, res, next) => {
+  passport.authenticate(
+    "local-register",
+    (error: any, account: any, info: any) => {
+      if (!account) {
+        return res.status(400).json({ message: info.message });
+      }
+      req.logIn(account, (error) => {
+        if (error) {
+          return res.status(400).json({ message: error });
+        }
+        return res
+          .status(200)
+          .json({ message: "Login successful", account: account });
+      });
+    }
+  )(req, res, next);
 };
