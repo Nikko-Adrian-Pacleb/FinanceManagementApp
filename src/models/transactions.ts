@@ -2,6 +2,19 @@ import { InferSchemaType, Schema, model } from "mongoose";
 
 const transactionSchema = new Schema(
   {
+    // Transaction Account Details
+    TransactionAccount: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Account",
+    },
+    TransactionWallet: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Wallet",
+    },
+
+    // Transaction Details
     TransactionDescription: {
       type: String,
       required: true,
