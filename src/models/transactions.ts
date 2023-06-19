@@ -8,16 +8,21 @@ const transactionSchema = new Schema(
       required: true,
       ref: "Account",
     },
-    TransactionWallet: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "Wallet",
-    },
+    // !!! UNCOMMENT WHEN WALLETS ARE IMPLEMENTED !!!
+    // TransactionWallet: {
+    //   type: Schema.Types.ObjectId,
+    //   required: true,
+    //   ref: "Wallet",
+    // },
 
     // Transaction Details
-    TransactionDescription: {
+    TransactionTitle: {
       type: String,
       required: true,
+      trim: true,
+    },
+    TransactionDescription: {
+      type: String,
       trim: true,
     },
     TransactionType: {
@@ -36,9 +41,10 @@ const transactionSchema = new Schema(
       get: (v: number) => (v / 100).toFixed(2),
       set: (v: number) => v * 100,
     },
-    TransactionTag: [
+    TransactionTags: [
       {
         type: Schema.Types.ObjectId,
+        required: true,
       },
     ],
   },

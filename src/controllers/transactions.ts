@@ -2,6 +2,8 @@ import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import Transaction from "../models/transactions";
 import mongoose, { Types } from "mongoose";
+import Account from "../models/accounts";
+import transactionTags from "../models/transactionTags";
 
 /**
  * @route GET /transactions
@@ -25,11 +27,14 @@ export const getTransactions: RequestHandler = async (req, res, next) => {
  * @access Private !!!Not Implemented!!!
  */
 interface CreateTransactionBody {
+  TransactionAccount?: Types.ObjectId;
+  TransactionWallet?: Types.ObjectId;
+  TransactionTitle?: string;
   TransactionDescription?: string;
   TransactionType?: string;
   TransactionDate?: Date;
   TransactionAmount?: number;
-  TransactionTag?: Array<Types.ObjectId>;
+  TransactionTags?: Array<Types.ObjectId>;
 }
 export const createTransaction: RequestHandler<
   unknown,
@@ -38,20 +43,57 @@ export const createTransaction: RequestHandler<
   unknown
 > = async (req, res, next) => {
   const {
+    TransactionAccount,
+    TransactionWallet,
+    TransactionTitle,
     TransactionDescription,
     TransactionType,
     TransactionDate,
     TransactionAmount,
-    TransactionTag,
   } = req.body;
+  let { TransactionTags } = req.body;
   try {
+    // --- Validation Start --- //
+    // Check if transaction account is valid
+    if (TransactionAccount && !mongoose.Types.ObjectId.isValid(TransactionAccount)) {
+      throw createHttpError(400, "Invalid Transaction Account");
+    }
+    // Check if transaction wallet is valid
+    // !!! UNCOMMENT WHEN WALLETS ARE IMPLEMENTED !!!
+    // if (TransactionWallet && !mongoose.Types.ObjectId.isValid(TransactionWallet)) {
+    //   throw createHttpError(400, "Invalid Transaction Wallet");
+    // }
+    // Check if transaction title exists
+    if (!TransactionTitle) {
+      throw createHttpError(400, "Transaction Title is Required");
+    }
+    // Check if there is a transaction tag
+    if (!TransactionTags) {
+      TransactionTags = [];
+      // If there is no transaction tag, save it to no tag
+      const noTag = await transactionTags.findOne({ TransactionTagName: "No Tag" });
+      // If there is no no tag, create one
+      if (!noTag) {
+        const newNoTag = new transactionTags({
+          TransactionTagName: "No Tag",
+        });
+        await newNoTag.save();
+        TransactionTags.push(newNoTag._id);
+      } else {
+        TransactionTags.push(noTag._id);
+      }
+    }
+
     // Create new transaction
     const newTransaction = new Transaction({
+      TransactionAccount,
+      TransactionWallet,
+      TransactionTitle,
       TransactionDescription,
       TransactionType,
       TransactionDate,
       TransactionAmount,
-      TransactionTag,
+      TransactionTags,
     });
 
     // Check if transaction is valid
@@ -149,11 +191,14 @@ interface UpdateTransactionByIdParams {
   transactionId: string;
 }
 interface UpdateTransactionByIdBody {
+  TransactionAccount?: Types.ObjectId;
+  TransactionWallet?: Types.ObjectId;
+  TransactionTitle?: string;
   TransactionDescription?: string;
   TransactionType?: string;
   TransactionDate?: Date;
   TransactionAmount?: number;
-  TransactionTag?: Array<Types.ObjectId>;
+  TransactionTags?: Array<Types.ObjectId>;
 }
 export const updateTransactionById: RequestHandler<
   UpdateTransactionByIdParams,
@@ -177,14 +222,22 @@ export const updateTransactionById: RequestHandler<
 
     // Update transaction
     const {
+      TransactionTitle,
       TransactionDescription,
       TransactionType,
       TransactionDate,
       TransactionAmount,
-      TransactionTag,
+      TransactionTags,
     } = req.body;
+
+    if (TransactionTitle) {
+      updatedTransaction.TransactionTitle = TransactionTitle;
+    }
     if (TransactionDescription) {
       updatedTransaction.TransactionDescription = TransactionDescription;
+    }
+    else {
+      updatedTransaction.TransactionDescription = "";
     }
     if (TransactionType) {
       updatedTransaction.TransactionType = TransactionType;
@@ -195,8 +248,23 @@ export const updateTransactionById: RequestHandler<
     if (TransactionAmount) {
       updatedTransaction.TransactionAmount = TransactionAmount;
     }
-    if (TransactionTag) {
-      updatedTransaction.TransactionTag = TransactionTag;
+    if (TransactionTags) {
+      updatedTransaction.TransactionTags = TransactionTags;
+    }
+    else {
+      updatedTransaction.TransactionTags = [];
+      // If there is no transaction tag, save it to no tag
+      const noTag = await transactionTags.findOne({ TransactionTagName: "No Tag" });
+      // If there is no no tag, create one
+      if (!noTag) {
+        const newNoTag = new transactionTags({
+          TransactionTagName: "No Tag",
+        });
+        await newNoTag.save();
+        updatedTransaction.TransactionTags.push(newNoTag._id);
+      } else {
+        updatedTransaction.TransactionTags.push(noTag._id);
+      }
     }
 
     // Check if transaction is valid
