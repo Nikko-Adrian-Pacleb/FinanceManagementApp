@@ -6,6 +6,7 @@ import homeRoute from "./routes/home";
 import transacationsRoute from "./routes/transactions";
 import transactionTagsRoute from "./routes/transactionTags";
 import accountsRoute from "./routes/accounts";
+import walletsRoute from "./routes/wallets";
 // Middleware
 import morgan from "morgan";
 import createHttpError, { isHttpError } from "http-errors";
@@ -45,6 +46,7 @@ app.use("/", homeRoute);
 app.use("/transactions", transacationsRoute);
 app.use("/transactionTags", transactionTagsRoute);
 app.use("/accounts", accountsRoute);
+app.use("/wallets", walletsRoute);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Page Not Found"));
