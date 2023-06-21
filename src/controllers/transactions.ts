@@ -3,6 +3,7 @@ import createHttpError from "http-errors";
 import Transaction from "../models/transactions";
 import mongoose, { Types } from "mongoose";
 import Account from "../models/accounts";
+import Wallet from "../models/wallets";
 import transactionTags from "../models/transactionTags";
 
 /**
@@ -58,11 +59,19 @@ export const createTransaction: RequestHandler<
     if (TransactionAccount && !mongoose.Types.ObjectId.isValid(TransactionAccount)) {
       throw createHttpError(400, "Invalid Transaction Account");
     }
+    const account = await Account.findById(TransactionAccount);
+    if (!account) {
+      throw createHttpError(400, "Invalid Transaction Account");
+    }
     // Check if transaction wallet is valid
-    // !!! UNCOMMENT WHEN WALLETS ARE IMPLEMENTED !!!
-    // if (TransactionWallet && !mongoose.Types.ObjectId.isValid(TransactionWallet)) {
-    //   throw createHttpError(400, "Invalid Transaction Wallet");
-    // }
+    if (TransactionWallet && !mongoose.Types.ObjectId.isValid(TransactionWallet)) {
+      throw createHttpError(400, "Invalid Transaction Wallet");
+    }
+    const wallet = await Wallet.findById(TransactionWallet);
+    if (!wallet) {
+      throw createHttpError(400, "Invalid Transaction Wallet");
+    }
+
     // Check if transaction title exists
     if (!TransactionTitle) {
       throw createHttpError(400, "Transaction Title is Required");
@@ -206,7 +215,46 @@ export const updateTransactionById: RequestHandler<
   UpdateTransactionByIdBody,
   unknown
 > = async (req, res, next) => {
+  //Update transaction
+    const {
+      TransactionAccount,
+      TransactionWallet,
+      TransactionTitle,
+      TransactionDescription,
+      TransactionType,
+      TransactionDate,
+      TransactionAmount,
+      TransactionTags,
+    } = req.body;
   try {
+    // Check if Transaction Account is valid and exists
+    if(TransactionAccount && !mongoose.Types.ObjectId.isValid(TransactionAccount)) {
+      throw createHttpError(400, "Invalid Transaction Account");
+    }
+    const account = await Account.findById(TransactionAccount);
+    if(!account) {
+      throw createHttpError(404, "Account Not Found");
+    }
+    // CHeck if Transaction Wallet is valid and exists
+    if(TransactionWallet && !mongoose.Types.ObjectId.isValid(TransactionWallet)) {
+      throw createHttpError(400, "Invalid Transaction Wallet");
+    }
+    const wallet = await Wallet.findById(TransactionWallet);
+    if(!wallet) {
+      throw createHttpError(404, "Wallet Not Found");
+    }
+    // Check if tags are valid and exists
+    if(TransactionTags) {
+      for(let i = 0; i < TransactionTags.length; i++) {
+        if(!mongoose.Types.ObjectId.isValid(TransactionTags[i])) {
+          throw createHttpError(400, "Invalid Transaction Tag");
+        }
+        const tag = await transactionTags.findById(TransactionTags[i]);
+        if(!tag) {
+          throw createHttpError(404, "Transaction Tag Not Found");
+        }
+      }
+    }
     // Check if transactionId is valid
     if (!mongoose.Types.ObjectId.isValid(req.params.transactionId)) {
       throw createHttpError(400, "Invalid transaction id");
@@ -221,15 +269,12 @@ export const updateTransactionById: RequestHandler<
     }
 
     // Update transaction
-    const {
-      TransactionTitle,
-      TransactionDescription,
-      TransactionType,
-      TransactionDate,
-      TransactionAmount,
-      TransactionTags,
-    } = req.body;
-
+    if(TransactionAccount) {
+      updatedTransaction.TransactionAccount = TransactionAccount;
+    }
+    if (TransactionWallet) {
+      updatedTransaction.TransactionWallet = TransactionWallet;
+    }
     if (TransactionTitle) {
       updatedTransaction.TransactionTitle = TransactionTitle;
     }

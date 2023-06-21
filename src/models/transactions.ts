@@ -8,12 +8,11 @@ const transactionSchema = new Schema(
       required: true,
       ref: "Account",
     },
-    // !!! UNCOMMENT WHEN WALLETS ARE IMPLEMENTED !!!
-    // TransactionWallet: {
-    //   type: Schema.Types.ObjectId,
-    //   required: true,
-    //   ref: "Wallet",
-    // },
+    TransactionWallet: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Wallet",
+    },
 
     // Transaction Details
     TransactionTitle: {
