@@ -8,6 +8,7 @@ const router = express.Router();
 router.get("/", isAuth, WalletsController.getWallets);
 router.post("/", isAuth, WalletsController.createWallet);
 router.get("/:WalletId", isAuth, WalletsController.getWallet);
+router.put("/:WalletId", isAuth, WalletsController.updateWallet);
 //-- Routes End --//
 
 export default router;

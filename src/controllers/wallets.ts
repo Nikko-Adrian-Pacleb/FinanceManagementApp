@@ -103,3 +103,62 @@ export const getWallet: RequestHandler<
         next(error);
     }
 }
+
+/**
+ * @route PUT /wallets/:WalletId
+ * @description Update a wallet by id
+ * @access Private
+ */
+interface UpdateWalletParams {
+    WalletId?: string;
+}
+interface UpdateWalletBody {
+    WalletAccount?: Types.ObjectId;
+    WalletName?: string;
+    WalletDescription?: string;
+    WalletBalance?: number;
+}
+export const updateWallet: RequestHandler<
+    UpdateWalletParams,
+    unknown,
+    UpdateWalletBody,
+    unknown
+> = async (req, res, next) => {
+    try {
+        const { WalletId } = req.params;
+        const { WalletAccount, WalletName, WalletDescription, WalletBalance } = req.body;
+        // Check if wallet is valid
+        if(WalletId && !mongoose.Types.ObjectId.isValid(WalletId)) {   
+            throw createHttpError(400, "Invalid Wallet Id");
+        }
+        // Validate Fields
+        if(WalletAccount && !mongoose.Types.ObjectId.isValid(WalletAccount)) {
+            throw createHttpError(400, "Invalid Wallet Account");
+        }
+        if(!WalletName) {
+            throw createHttpError(400, "Wallet Name is required");
+        }
+        if(!WalletBalance) {
+            throw createHttpError(400, "Wallet Balance is required");
+        }
+        // Update Wallet
+        const wallet = await Wallets.findByIdAndUpdate(
+            WalletId,
+            {
+                WalletAccount,
+                WalletName,
+                WalletDescription,
+                WalletBalance,
+            },
+            { new: true }
+        );
+        if(!wallet) {
+            // If wallet not found, throw 404 error
+            throw createHttpError(404, "Wallet not found");
+        }
+        res.status(200).json(wallet);
+    }
+    catch(error) {
+        next(error);
+    }
+}
