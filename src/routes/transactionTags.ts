@@ -1,26 +1,29 @@
 import express from "express";
-import createHttpError from "http-errors";
 import * as TransactionTagsController from "../controllers/transactionTags";
-
+import { isAuth } from "../middleware/Authenticated";
 const router = express.Router();
 
 //-- Routes Start --//
-router.get("/", TransactionTagsController.getTransactionTags);
-router.post("/", TransactionTagsController.createTransactionTag);
+router.get("/", isAuth, TransactionTagsController.getTransactionTags);
+router.post("/", isAuth, TransactionTagsController.createTransactionTag);
 router.get(
   "/page/:pageNumber",
+  isAuth,
   TransactionTagsController.getAllTransactionTags
 );
 router.get(
   "/:transactionTagId",
+  isAuth,
   TransactionTagsController.getTransactionTagById
 );
 router.put(
   "/:transactionTagId",
+  isAuth,
   TransactionTagsController.updateTransactionTagById
 );
 router.delete(
   "/:transactionTagId",
+  isAuth,
   TransactionTagsController.deleteTransactionTagById
 );
 //-- Routes End --//
