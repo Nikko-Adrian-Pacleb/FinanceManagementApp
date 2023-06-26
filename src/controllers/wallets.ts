@@ -162,3 +162,41 @@ export const updateWallet: RequestHandler<
         next(error);
     }
 }
+
+/**
+ * @route DELETE /wallets/:WalletId
+ * @description Delete a wallet by id
+ * @access Private
+ */
+interface DeleteWalletParams {
+    WalletId?: string;
+}
+export const deleteWallet: RequestHandler<
+    DeleteWalletParams,
+    unknown,
+    unknown,
+    unknown
+> = async (req, res, next) => {
+    try {
+        const { WalletId } = req.params;
+        // Check if wallet is valid
+        if(WalletId && !mongoose.Types.ObjectId.isValid(WalletId)) {
+            throw createHttpError(400, "Invalid Wallet Id");
+        }
+        // Check if wallet exists
+        const walletExists = await Wallets.findById(WalletId);
+        if(!walletExists) {
+            // If wallet not found, throw 404 error
+            throw createHttpError(404, "Wallet not found");
+        }
+        // Delete Wallet
+        const wallet = await Wallets.findByIdAndDelete(WalletId);
+        if(!wallet) {
+            // If wallet not found, throw 404 error
+            throw createHttpError(404, "Wallet not found");
+        }
+        res.status(200).json(wallet);
+    } catch (error) {
+        next(error);
+    }
+}

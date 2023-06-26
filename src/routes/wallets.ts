@@ -9,6 +9,7 @@ router.get("/", isAuth, WalletsController.getWallets);
 router.post("/", isAuth, WalletsController.createWallet);
 router.get("/:WalletId", isAuth, WalletsController.getWallet);
 router.put("/:WalletId", isAuth, WalletsController.updateWallet);
+router.delete("/:WalletId", isAuth, WalletsController.deleteWallet);
 //-- Routes End --//
 
 export default router;
