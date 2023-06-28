@@ -85,7 +85,9 @@ export const createAccount: RequestHandler<
  * @access Private !!!Not Implemented!!!
  */
 export const getLoginPage: RequestHandler = (req, res) => {
-  res.send("Login page");
+  res.status(200).render("login", {
+    title: "Login Page"
+  })
 };
 
 /**
@@ -94,6 +96,7 @@ export const getLoginPage: RequestHandler = (req, res) => {
  * @access Private !!!Not Implemented!!!
  */
 export const loginAccount: RequestHandler = async (req, res, next) => {
+  console.log(req.body)
   passport.authenticate(
     "local-register",
     (error: any, account: any, info: any) => {
