@@ -107,9 +107,7 @@ export const loginAccount: RequestHandler = async (req, res, next) => {
         if (error) {
           return res.status(400).json({ message: error });
         }
-        return res
-          .status(200)
-          .json({ message: "Login successful", account: account });
+        return res.status(200).redirect("/")
       });
     }
   )(req, res, next);
