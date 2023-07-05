@@ -1,21 +1,13 @@
 import express from "express";
 import { isAuth } from "../middleware/Authenticated";
 import mongoose from "mongoose";
-import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import Wallet from "../models/wallets";
 
 const router = express.Router();
 
-type typeOfUserObject = object;
-type RequestWithUser = Request & {user: typeOfUserObject};
-function assertHasUser(req: Request): asserts req is RequestWithUser {
-    if (!( "user" in req)) {
-        throw new Error("Request object without user found unexpectedly");
-    }
-}
 //-- Routes Start --//
-router.get("/", isAuth, async (req, res, next) => {
+router.get("/", isAuth,  async (req: any, res, next) => {
   try{
     if (!req.user) {
       throw createHttpError(401, "Unauthorized");
@@ -23,10 +15,11 @@ router.get("/", isAuth, async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.user._id)) {
       throw createHttpError(400, "Invalid Account ID");
     }
-    const wallets = await Wallet.find({ AccountId: req.user._id });
+    const wallets = await Wallet.find({ WalletAccount: req.user._id });
     res.render("home_page", {
       title: "Home",
       user: req.user,
+      wallets: wallets,
     });
   }
   catch(error){
@@ -34,6 +27,7 @@ router.get("/", isAuth, async (req, res, next) => {
   }
   
 });
+
 //-- Routes End --//
 
 export default router;
