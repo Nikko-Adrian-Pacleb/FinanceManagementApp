@@ -6,6 +6,15 @@
     <title><%= title %></title>
 </head>
 <body>
-    <h1>Hello, this is the homepage</h1>
+    <p>Account Info: <%= user %></p>
+    <h1>Account ID: <%= user._id %></h1>
+    <form action="/transactions" method="POST">
+        
+        <div class="form-group">
+            
+            
+        </div>
+        <button type="submit">Login</button>
+    </form>
 </body>
 </html>
