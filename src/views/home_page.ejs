@@ -10,12 +10,17 @@
     <h1>Account ID: <%= user._id %></h1>
     <p>Wallets: <%= wallets %></p>
     <form action="/transactions" method="POST">
-        
-        <div class="form-group">
-            
-            
-        </div>
-        <button type="submit">Login</button>
+        <label for="TransactionAccount">Account: <%= user._id %></label>
+        <input type="hidden" name="TransactionAccount" value="<%= user._id %>" id="input-account">
+        <br>
+        <label for="TransactionWallet">Wallet: </label>
+        <select name="TransactionWallet" id="select-wallets">
+            <% for (let i = 0; i < wallets.length; i++) { %>
+                <option value="<%= wallets[i]._id %>"><%= wallets[i].WalletName %></option>
+            <% } %>
+        </select>
+        <br>
+        <button type="submit">Create Transaction</button>
     </form>
 </body>
 </html>
