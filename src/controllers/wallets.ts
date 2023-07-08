@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import Wallets from "../models/wallets";
+import Accounts from "../models/accounts";
 import mongoose, { Types } from "mongoose";
 
 /**
@@ -59,6 +60,16 @@ export const createWallet: RequestHandler<
             WalletDescription,
             WalletBalance,
         });
+
+        // Add Wallet to Account
+        if(WalletAccount) {
+            const account = await Accounts.findById(WalletAccount);
+            if(!account) {
+                throw createHttpError(404, "Account not found");
+            }
+            account.AccountWallets.push(wallet._id);
+            await account.save();
+        }
 
         // Save Wallet
         await wallet.save();
