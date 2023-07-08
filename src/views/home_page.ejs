@@ -20,6 +20,32 @@
             <% } %>
         </select>
         <br>
+        <input type="radio" name="TransactionType" id="input-type-expense" value="Expense" checked>
+        <label for="input-type-expense">Expense</label>
+        <input type="radio" name="TransactionType" id="input-type-income" value="Income">
+        <label for="input-type-income">Income</label>
+        <br>
+        <label for="input-amount">Amount: </label>
+        <input type="number" name="TransactionAmount" id="input-amount">
+        <br>
+        <label for="input-title">Title: </label>
+        <input type="text" name="TransactionTitle" id="input-title" placeholder="Grocery, ...">
+        <br>
+        <label for="textarea-description">Description: </label><br>
+        <textarea name="TransactionDescription" id="textarea-description" cols="30" rows="10"></textarea>
+        <br>
+        <label for="input-date">Date: </label>
+        <input type="date" name="TransactionDate" id="input-date" value="<%= dateNow %>">
+        <br>
+        <label for="TransactionTags">Tags: </label>
+        <% for(let i = 0; i < tags.length; ++i) { %>
+            <% if (i % 3 == 0) { %>
+                <br>
+            <% } %>
+            <input type="checkbox" name="TransactionTags" value="<%= tags[i]._id %>" id="input-tag-<%= tags[i]._id %>">
+            <label for="input-tag-<%= tags[i]._id %>"><%= tags[i].TransactionTagName %></label>
+        <% } %>
+        <br>
         <button type="submit">Create Transaction</button>
     </form>
 </body>
