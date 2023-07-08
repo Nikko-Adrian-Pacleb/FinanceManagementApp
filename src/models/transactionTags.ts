@@ -2,6 +2,11 @@ import { InferSchemaType, Schema, model } from "mongoose";
 
 const transactionTagSchema = new Schema(
   {
+    TransactionTagAccount: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Account",
+    },
     TransactionTagName: {
       type: String,
       required: true,

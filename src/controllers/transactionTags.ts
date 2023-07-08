@@ -25,6 +25,7 @@ export const getTransactionTags: RequestHandler = async (req, res, next) => {
  * @access Private !!!Not Implemented!!!
  */
 interface CreateTransactionTagBody {
+  TransactionTagAccount?: Types.ObjectId;
   TransactionTagName?: string;
   TransactionTagColor?: string;
 }
@@ -34,17 +35,23 @@ export const createTransactionTag: RequestHandler<
   CreateTransactionTagBody,
   unknown
 > = async (req, res, next) => {
-  const { TransactionTagName, TransactionTagColor } = req.body;
+  const { TransactionTagAccount, TransactionTagName, TransactionTagColor } = req.body;
   try {
+    // Check if Account ID is valid
+    if (TransactionTagAccount && !mongoose.Types.ObjectId.isValid(TransactionTagAccount)) {
+      throw createHttpError(400, "Invalid Account ID");
+    }
     // Check if transactionTag already exists
     const transactionTagExists = await TransactionTag.findOne({
-      TransactionTagName,
+      TransactionTagAccount: TransactionTagAccount,
+      TransactionTagName: TransactionTagName,
     });
     if (transactionTagExists) {
       throw createHttpError(400, "TransactionTag already exists");
     }
     // Create new transactionTag
     const newTransactionTag = new TransactionTag({
+      TransactionTagAccount,
       TransactionTagName,
       TransactionTagColor,
     });
