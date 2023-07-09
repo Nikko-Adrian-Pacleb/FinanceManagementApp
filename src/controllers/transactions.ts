@@ -36,6 +36,7 @@ interface CreateTransactionBody {
   TransactionDate?: Date;
   TransactionAmount?: number;
   TransactionTags?: Array<Types.ObjectId>;
+  TransactionSite?: string;
 }
 export const createTransaction: RequestHandler<
   unknown,
@@ -51,6 +52,7 @@ export const createTransaction: RequestHandler<
     TransactionType,
     TransactionDate,
     TransactionAmount,
+    TransactionSite,
   } = req.body;
   let { TransactionTags } = req.body;
   try {
@@ -80,10 +82,11 @@ export const createTransaction: RequestHandler<
     if (!TransactionTags) {
       TransactionTags = [];
       // If there is no transaction tag, save it to no tag
-      const noTag = await transactionTags.findOne({ TransactionTagName: "No Tag" });
+      const noTag = await transactionTags.findOne({ TransactionTagAccount: TransactionAccount, TransactionTagName: "No Tag" });
       // If there is no no tag, create one
       if (!noTag) {
         const newNoTag = new transactionTags({
+          TransactionTagAccount: TransactionAccount,
           TransactionTagName: "No Tag",
         });
         await newNoTag.save();
@@ -114,7 +117,7 @@ export const createTransaction: RequestHandler<
     // Save transaction to database
     await newTransaction.save();
 
-    res.status(201).json(newTransaction);
+    res.status(201).redirect(TransactionSite || "/transactions");
   } catch (error) {
     next(error);
   }
