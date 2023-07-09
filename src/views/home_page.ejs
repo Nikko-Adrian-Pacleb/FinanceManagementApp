@@ -10,6 +10,7 @@
     <h1>Account ID: <%= user._id %></h1>
     <p>Wallets: <%= wallets %></p>
     <form action="/transactions" method="POST">
+        <input type="hidden" name="TransactionSite" value=<%= site %>>
         <label for="TransactionAccount">Account: <%= user._id %></label>
         <input type="hidden" name="TransactionAccount" value="<%= user._id %>" id="input-account">
         <br>
