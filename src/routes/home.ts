@@ -18,11 +18,13 @@ router.get("/", isAuth,  async (req: any, res, next) => {
     }
     const wallets = await Wallet.find({ WalletAccount: req.user._id });
     const tags = await TransactionTag.find({ TransactionTagAccount: req.user._id });
+    const dateArr = new Date().toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric'}).split('/'); // MM/DD/YYYY
     res.render("home_page", {
+      site: "/",
       title: "Home",
       user: req.user,
       wallets: wallets,
-      dateNow: new Date().toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric'}).split('/').reverse().join('-'),
+      dateNow: dateArr[2] + "-" + dateArr[0] + "-" + dateArr[1],
       tags: tags,
     });
   }
