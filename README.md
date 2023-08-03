@@ -17,3 +17,31 @@ The project is mainly built using TypeScript as the main language
 * MongoDB
 * D3
 * Ejs
+
+## Getting Started
+To Create your own Finance Management System, you need to have the following:
+* Node
+* MongoDB Account
+
+### Prerequisite
+* Node
+```
+npm install *version of code*
+```
+
+### Installation
+1. Setup a MongoDB Database. (Follow this sample MongoDB tutorial on creating a MongoDB Atlas)
+2. Clone the repo
+3. Intall NPM Packages
+4. ENV Variables Setup
+
+## Usage
+
+## License
+
+## Contact
+Nikko Adrian
+pacleb.nikko@gmail.com
+
+## Acknowledgments
+
